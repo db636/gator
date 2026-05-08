@@ -1,23 +1,27 @@
 import { CommandsRegistry, runCommand } from './commands';
 import { handlerLogin } from './commands/login';
-import { setUser, readConfig } from "./config";
-import { argv, exit } from 'node:process';
+import { handlerRegister } from './commands/register';
+import { argv } from 'node:process';
+import { handlerReset } from './commands/reset';
 
-function main() {
+async function main() {
   const registry: CommandsRegistry = {
-    login: handlerLogin
+    login: handlerLogin,
+    register: handlerRegister,
+    reset: handlerReset
   }
 
   const [, , ...args] = argv;
 
   if (!args.length) {
     console.log('Argument required');
-    exit(1);
+    process.exit(1);
   }
 
   const [cmdName, ...rest] = args;
 
-  runCommand(registry, cmdName, ...rest);
+  await runCommand(registry, cmdName, ...rest);
+  process.exit(0);
 }
 
-main();
+await main();

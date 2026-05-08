@@ -1,11 +1,20 @@
 import { setUser } from 'src/config';
-import {CommandHandler} from './index';
+import { CommandHandler } from './index';
+import { getUserByName } from 'src/lib/db/queries/users';
 
-export const handlerLogin: CommandHandler = (cmdName, ...args) => {
+export const handlerLogin: CommandHandler = async (cmdName, ...args) => {
   if (!args || args.length === 0) {
     throw Error('login handler expects a single argument, the username');
   }
 
-  setUser(args[0]);
-  console.log('User ' + args[0] + ' has been set.');
+  const userName = args[0]
+
+  const userExists = await getUserByName(userName)
+
+  if (!userExists) {
+    throw Error('User doesnt exist');
+  }
+
+  setUser(userName);
+  console.log('User ' + userName + ' has been set.');
 }
