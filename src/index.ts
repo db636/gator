@@ -4,13 +4,15 @@ import { handlerRegister } from './commands/register';
 import { argv } from 'node:process';
 import { handlerReset } from './commands/reset';
 import { handlerUsers } from './commands/users';
+import { handlerAgg } from './commands/agg';
 
 async function main() {
   const registry: CommandsRegistry = {
     login: handlerLogin,
     register: handlerRegister,
     reset: handlerReset,
-    users: handlerUsers
+    users: handlerUsers,
+    agg: handlerAgg
   }
 
   const [, , ...args] = argv;
