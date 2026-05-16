@@ -15,6 +15,13 @@
       "when": 1778703071449,
       "tag": "0001_fix_feeds",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778941491306,
+      "tag": "0002_create_feed_follow",
+      "breakpoints": true
     }
   ]
 }

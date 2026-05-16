@@ -7,6 +7,14 @@ export async function createFeed(name: string, url: string, userId: string) {
   return result;
 }
 
+export async function getFeedByUrl(url: string) {
+  const [result] = await db
+    .select({ id: feeds.id })
+    .from(feeds)
+    .where(eq(feeds.url, url))
+  return result
+}
+
 export async function getFeeds() {
   const result = await db
     .select({ name: feeds.name, url: feeds.url, userId: feeds.userId, userName: users.name, })

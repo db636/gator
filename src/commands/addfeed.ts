@@ -1,8 +1,9 @@
-import { readConfig, setUser } from 'src/config';
+import { readConfig } from 'src/config';
 import { CommandHandler } from './index';
-import { createUser, getUserByName } from 'src/lib/db/queries/users';
-import { feeds, type User, type Feed } from 'src/lib/db/schema';
+import { getUserByName } from 'src/lib/db/queries/users';
+import { type User, type Feed } from 'src/lib/db/schema';
 import { createFeed } from 'src/lib/db/queries/feeds';
+import { createFeedFollow } from 'src/lib/db/queries/feed_follows';
 
 export const handlerAddFeed: CommandHandler = async (cmdName, ...args) => {
   if (!args || args.length !== 2) {
@@ -20,6 +21,10 @@ export const handlerAddFeed: CommandHandler = async (cmdName, ...args) => {
   const url = args[1]
   
   const feed = await createFeed(name, url, user.id)
+  if (!feed) {
+    throw new Error(`Failed to create feed`);
+  }
+  await createFeedFollow(feed.id, user.id)
 }
 
 function printFeed(feed: Feed, user: User) {

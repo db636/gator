@@ -7,6 +7,8 @@ import { handlerUsers } from './commands/users';
 import { handlerAgg } from './commands/agg';
 import { handlerAddFeed } from './commands/addfeed';
 import { handlerFeeds } from './commands/feeds';
+import { handlerFollow } from './commands/follow';
+import { handlerFollowing } from './commands/following';
 
 async function main() {
   const registry: CommandsRegistry = {
@@ -16,7 +18,9 @@ async function main() {
     users: handlerUsers,
     agg: handlerAgg,
     addfeed: handlerAddFeed,
-    feeds: handlerFeeds
+    feeds: handlerFeeds,
+    follow: handlerFollow,
+    following: handlerFollowing
   }
 
   const [, , ...args] = argv;
