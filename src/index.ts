@@ -6,6 +6,7 @@ import { handlerReset } from './commands/reset';
 import { handlerUsers } from './commands/users';
 import { handlerAgg } from './commands/agg';
 import { handlerAddFeed } from './commands/addfeed';
+import { handlerFeeds } from './commands/feeds';
 
 async function main() {
   const registry: CommandsRegistry = {
@@ -14,7 +15,8 @@ async function main() {
     reset: handlerReset,
     users: handlerUsers,
     agg: handlerAgg,
-    addfeed: handlerAddFeed
+    addfeed: handlerAddFeed,
+    feeds: handlerFeeds
   }
 
   const [, , ...args] = argv;
