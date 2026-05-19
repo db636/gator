@@ -1,7 +1,6 @@
-import { CommandsRegistry, runCommand } from './commands';
+import { CommandsRegistry, registerCommand, runCommand } from './commands';
 import { handlerLogin } from './commands/login';
 import { handlerRegister } from './commands/register';
-import { argv } from 'node:process';
 import { handlerReset } from './commands/reset';
 import { handlerUsers } from './commands/users';
 import { handlerAgg } from './commands/agg';
@@ -9,31 +8,41 @@ import { handlerAddFeed } from './commands/addfeed';
 import { handlerFeeds } from './commands/feeds';
 import { handlerFollow } from './commands/follow';
 import { handlerFollowing } from './commands/following';
+import { middlewareLoggedIn } from './lib/middlewares/middleware-logged-in';
 
 async function main() {
-  const registry: CommandsRegistry = {
-    login: handlerLogin,
-    register: handlerRegister,
-    reset: handlerReset,
-    users: handlerUsers,
-    agg: handlerAgg,
-    addfeed: handlerAddFeed,
-    feeds: handlerFeeds,
-    follow: handlerFollow,
-    following: handlerFollowing
-  }
+  const args = process.argv.slice(2);
 
-  const [, , ...args] = argv;
-
-  if (!args.length) {
-    console.log('Argument required');
+  if (args.length < 1) {
+    console.log("usage: cli <command> [args...]");
     process.exit(1);
   }
 
-  const [cmdName, ...rest] = args;
+  const cmdName = args[0];
+  const cmdArgs = args.slice(1);
+  const commandsRegistry: CommandsRegistry = {};
 
-  await runCommand(registry, cmdName, ...rest);
+  registerCommand(commandsRegistry, "login", handlerLogin);
+  registerCommand(commandsRegistry, "register", handlerRegister);
+  registerCommand(commandsRegistry, "reset", handlerReset);
+  registerCommand(commandsRegistry, "users", handlerUsers);
+  registerCommand(commandsRegistry, "agg", handlerAgg);
+  registerCommand(commandsRegistry, "addfeed", middlewareLoggedIn(handlerAddFeed));
+  registerCommand(commandsRegistry, "feeds", handlerFeeds);
+  registerCommand(commandsRegistry, "follow", middlewareLoggedIn(handlerFollow));
+  registerCommand(commandsRegistry, "following", middlewareLoggedIn(handlerFollowing));
+
+  try {
+    await runCommand(commandsRegistry, cmdName, ...cmdArgs);
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(`Error running command ${cmdName}: ${err.message}`);
+    } else {
+      console.error(`Error running command ${cmdName}: ${err}`);
+    }
+    process.exit(1);
+  }
   process.exit(0);
 }
 
-await main();
+main();
